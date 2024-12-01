@@ -1,4 +1,5 @@
 from loader import input_as_ints
+import collections
 
 if __name__ == "__main__":
     input = input_as_ints(__file__)
@@ -9,9 +10,8 @@ if __name__ == "__main__":
         listA.append(a)
         listB.append(b)
 
-    listA.sort()
-    listB.sort()
+    b_count = dict(collections.Counter(listB))
 
-    differences = [abs(a - b) for a, b in zip(listA, listB)]
-    print(sum(differences))
+    similarity_scores = [b_count[a] * a for a in listA if a in b_count]
+    print(sum(similarity_scores))
 
