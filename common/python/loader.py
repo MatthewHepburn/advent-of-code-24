@@ -1,6 +1,9 @@
 import os
 
-def input_as_strings(caller_file: str) -> list[str]:
+from typing import List
+
+
+def get_file(caller_file: str):
     is_example = os.getenv('AOC_EXAMPLE_MODE') == "1"
     if is_example:
         filename = 'exampleInput.txt'
@@ -11,10 +14,17 @@ def input_as_strings(caller_file: str) -> list[str]:
     input_dir = os.path.dirname(caller_dir)
     path = os.path.join(input_dir, filename)
 
-    f = open(path, "r")
+    return open(path, "r")
+
+def input_as_strings(caller_file: str) -> List[str]:
+    f = get_file(caller_file)
     return f.readlines()
 
-def input_as_ints(caller_file: str) -> list[list[int]]:
+def input_as_string(caller_file: str) -> str:
+    f = get_file(caller_file)
+    return f.read()
+
+def input_as_ints(caller_file: str) -> List[List[int]]:
     strings = input_as_strings(caller_file)
     output = []
     for string in strings:
