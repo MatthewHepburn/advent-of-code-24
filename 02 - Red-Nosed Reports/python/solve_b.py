@@ -2,7 +2,7 @@ from loader import input_as_ints
 from common import is_safe
 
 if __name__ == "__main__":
-    input = input_as_ints(__file__)
+    input = input_as_ints()
 
     safe_reports = 0
     for report in input:

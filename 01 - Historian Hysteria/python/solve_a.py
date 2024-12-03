@@ -1,7 +1,7 @@
 from loader import input_as_ints
 
 if __name__ == "__main__":
-    input = input_as_ints(__file__)
+    input = input_as_ints()
 
     listA = []
     listB = []
