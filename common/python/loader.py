@@ -29,6 +29,3 @@ def input_as_ints() -> List[List[int]]:
         items = [int(x) for x in string.split()]
         output.append(items)
     return output
-
-
-
