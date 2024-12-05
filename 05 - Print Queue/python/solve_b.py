@@ -13,6 +13,30 @@ def is_in_right_order(rules: Dict[int, List[int]], sequence: List[int]) -> bool:
         seen[elem] = True
     return True
 
+def put_in_right_order(rules: Dict[int, List[int]], sequence: List[int]) -> List[int]:
+    requirement_dict = dict()
+    for elem in sequence:
+        required_before_list = []
+        if elem in rules:
+            required_before_list = [before for before in rules[elem] if before in sequence]
+        requirement_dict[elem] = required_before_list
+
+    output = []
+    added = dict()
+    while len(output) != len(sequence):
+        next = None
+        for elem, requirements in requirement_dict.items():
+            if not [x for x in requirements if x not in added]:
+                next = elem
+                break
+        if next is None:
+            raise Exception("Could not order sequence")
+        output.append(next)
+        added[next] = True
+        del requirement_dict[next]
+
+    return output
+
 if __name__ == "__main__":
     input = input_as_strings()
 
@@ -33,8 +57,9 @@ if __name__ == "__main__":
         if not ',' in line:
             continue
         sequence = [int(x) for x in line.split(',')]
-        if is_in_right_order(rules, sequence):
-            total = total + sequence[len(sequence) // 2]
+        if not is_in_right_order(rules, sequence):
+            ordered = put_in_right_order(rules, sequence)
+            total = total + ordered[len(ordered) // 2]
 
     print(total)
 
