@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from common import get_visted_if_terminates, position_of
+from grid import Direction
 from loader import input_as_chars
 
 if __name__ == "__main__":
@@ -10,7 +11,7 @@ if __name__ == "__main__":
     if guard_position is None:
         raise Exception("No start pos")
 
-    visited = get_visted_if_terminates(board, guard_position)
+    visited = get_visted_if_terminates(board, guard_position, Direction.UP)
 
     visited_total = 0
     for i in range(0, len(visited)):

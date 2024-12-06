@@ -9,9 +9,8 @@ def position_of(grid: List[List[str]], needles: List[str]) -> Optional[GridPoint
                 return GridPoint(i, j)
     return None
 
-def get_visted_if_terminates(board: List[List[str]], start: GridPoint) -> Optional[List[List[List[Direction]]]]:
+def get_visted_if_terminates(board: List[List[str]], start: GridPoint, direction: Direction) -> Optional[List[List[List[Direction]]]]:
     guard_position = start
-    direction: Direction = Direction.UP
 
     # Record every direction we've gone in for each point, to allow detecting loops
     visited: List[List[List[Direction]]] = []
