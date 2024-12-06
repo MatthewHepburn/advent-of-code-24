@@ -29,3 +29,7 @@ def input_as_ints() -> List[List[int]]:
         items = [int(x) for x in string.split()]
         output.append(items)
     return output
+
+def input_as_chars() -> List[List[str]]:
+    f = get_file()
+    return [list(line) for line in f.readlines()]
