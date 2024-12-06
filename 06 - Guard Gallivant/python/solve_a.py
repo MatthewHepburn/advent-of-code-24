@@ -1,15 +1,7 @@
 from typing import List, Optional
 
-from common import get_visted_if_terminates
-from grid import GridPoint, Direction, is_in_bounds
+from common import get_visted_if_terminates, position_of
 from loader import input_as_chars
-
-def position_of(grid: List[List[str]], needles: List[str]) -> Optional[GridPoint]:
-    for i in range(0, len(grid)):
-        for j in range(0, len(grid[i])):
-            if grid[i][j] in needles:
-                return GridPoint(i, j)
-    return None
 
 if __name__ == "__main__":
     board = input_as_chars()

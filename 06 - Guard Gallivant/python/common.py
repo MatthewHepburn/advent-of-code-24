@@ -2,6 +2,12 @@ from typing import List, Optional
 
 from grid import Direction, GridPoint, is_in_bounds
 
+def position_of(grid: List[List[str]], needles: List[str]) -> Optional[GridPoint]:
+    for i in range(0, len(grid)):
+        for j in range(0, len(grid[i])):
+            if grid[i][j] in needles:
+                return GridPoint(i, j)
+    return None
 
 def get_visted_if_terminates(board: List[List[str]], start: GridPoint) -> Optional[List[List[List[Direction]]]]:
     guard_position = start
