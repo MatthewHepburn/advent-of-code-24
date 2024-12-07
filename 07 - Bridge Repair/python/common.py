@@ -14,14 +14,17 @@ class Equation:
     def get_operator_positions(self) -> List[int]:
         return list(range(1, len(self.value_list)))
 
-    def evaluate(self, functions: List[callable]):
+    def test(self, functions: List[callable]) -> bool:
         value = self.value_list[0]
         for i in range(1, len(self.value_list)):
             function = functions[i - 1]
-            prev_val = value
             value = function(value, self.value_list[i])
 
-        return value
+            # Operators only increase our value, so we can short circuit if our number gets too large
+            if value > self.result:
+                return False
+
+        return value == self.result
 
     def from_string(input: str):
         [result_str, values_str] = input.split(': ')
@@ -74,9 +77,8 @@ def solve(operators: List[callable]) -> int:
     total = 0
     for equation in equations:
         for functions in permutations_with_repetition_fixed_len(operators, len(equation.get_operator_positions())):
-            result = equation.evaluate(functions)
-            if result == equation.result:
-                total = total + result
+            if equation.test(functions):
+                total = total + equation.result
                 break
 
     return total
