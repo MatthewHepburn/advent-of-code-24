@@ -45,6 +45,8 @@ def permutations_with_repetition_fixed_len(values, length: int):
     assert len(values) > 0
     previous = [0 for _ in range(0, length)]
 
+    yield [values[i] for i in previous]
+
     placeholder_output = [copy.copy(previous)]
     while True:
         next = []
@@ -60,15 +62,10 @@ def permutations_with_repetition_fixed_len(values, length: int):
 
         placeholder_output.append(next)
         previous = next
+        yield [values[i] for i in previous]
 
         if rollover:
             break
-
-    output = []
-    for placeholder in placeholder_output:
-        output.append([values[i] for i in placeholder])
-
-    return output
 
 def solve(operators: List[callable]) -> int:
     input = input_as_strings()
@@ -76,6 +73,9 @@ def solve(operators: List[callable]) -> int:
 
     total = 0
     for equation in equations:
+        # To really speed this up, we need to feed back function sequence prefixes we have ruled out
+        # due to them producing results too large int our permutation generator.
+        # But that's more work than I want to do right now!
         for functions in permutations_with_repetition_fixed_len(operators, len(equation.get_operator_positions())):
             if equation.test(functions):
                 total = total + equation.result
