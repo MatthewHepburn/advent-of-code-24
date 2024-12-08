@@ -47,7 +47,7 @@ class Direction(Enum):
         return Direction.UP
 
 
-def is_in_bounds(grid: List[List[str]], point: GridPoint) -> bool:
+def is_in_bounds(grid: List[List], point: GridPoint) -> bool:
     if point.i < 0 or point.i >= len(grid):
         return False
     if point.j < 0 or point.j >= len(grid[point.i]):
