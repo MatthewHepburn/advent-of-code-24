@@ -33,3 +33,7 @@ def input_as_ints() -> List[List[int]]:
 def input_as_chars() -> List[List[str]]:
     f = get_file()
     return [list(line) for line in f.readlines()]
+
+def input_as_chars_trimmed() -> List[List[str]]:
+    f = get_file()
+    return [list(line.strip()) for line in f.readlines() if len(line.strip()) > 0]

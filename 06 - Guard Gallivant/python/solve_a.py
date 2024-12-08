@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from common import get_visted_if_terminates, position_of
 from grid import Direction
 from loader import input_as_chars

@@ -21,6 +21,12 @@ class GridPoint:
     def move(self, vec: GridVector):
         return GridPoint(self.i + vec.i, self.j + vec.j)
 
+    def __str__(self):
+        return "(" + str(self.i) + "," + str(self.j) + ")"
+
+    def vector_to(self, b) -> GridVector:
+        return GridVector(b.i - self.i, b.j - self.j)
+
 
 # class syntax
 
@@ -48,3 +54,8 @@ def is_in_bounds(grid: List[List[str]], point: GridPoint) -> bool:
         return False
 
     return True
+
+def points_in_grid(grid: List[List]):
+    for i in range(0, len(grid)):
+        for j in range(0, len(grid[i])):
+            yield GridPoint(i, j)
