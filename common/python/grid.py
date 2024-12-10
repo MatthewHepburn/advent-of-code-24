@@ -21,8 +21,11 @@ class GridPoint:
     def move(self, vec: GridVector):
         return GridPoint(self.i + vec.i, self.j + vec.j)
 
-    def __str__(self):
+    def as_str(self) -> str:
         return "(" + str(self.i) + "," + str(self.j) + ")"
+
+    def __str__(self):
+        self.as_str()
 
     def vector_to(self, b) -> GridVector:
         return GridVector(b.i - self.i, b.j - self.j)
@@ -59,3 +62,25 @@ def points_in_grid(grid: List[List]):
     for i in range(0, len(grid)):
         for j in range(0, len(grid[i])):
             yield GridPoint(i, j)
+
+def get_directly_adjacent(grid: List[List], point: GridPoint) -> List[GridPoint]:
+    directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+    output = []
+    for direction in directions:
+        adjacent = point.move(direction.value)
+        if is_in_bounds(grid, adjacent):
+            output.append(adjacent)
+
+    return output
+
+def print_points_on_grid(grid: List[List], points: List[GridPoint]):
+    out_grid = []
+
+    for line in grid:
+        out_grid.append(["." for _ in line])
+
+    for point in points:
+        out_grid[point.i][point.j] = "X"
+
+    for line in out_grid:
+        print("".join(line))
