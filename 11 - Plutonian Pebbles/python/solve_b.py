@@ -1,4 +1,4 @@
 from common import solve
 
 if __name__ == "__main__":
-   print(solve(25))
+   print(solve(75))
