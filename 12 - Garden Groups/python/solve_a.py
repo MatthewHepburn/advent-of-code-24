@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from common import get_adjacent_region_points
 from loader import input_as_chars_trimmed
 from grid import points_in_grid, GridPoint, get_directly_adjacent
 
@@ -8,19 +9,13 @@ class Region:
         self.points = points
         self.perimeter = perimeter
 
-def get_adjacent_region_points(board: List[List[str]], point: GridPoint):
-    region_symbol = board[point.i][point.j]
-    return [adj_point for adj_point in get_directly_adjacent(board, point) if board[adj_point.i][adj_point.j] == region_symbol]
-
 
 def get_points_in_region(board: List[List[str]], point: GridPoint) -> Region:
-    points: Dict[str,GridPoint] = dict()
-    points[point.as_str()] = point
-
+    points: Dict[str, GridPoint] = dict()
     region_symbol = board[point.i][point.j]
 
-    frontier = get_adjacent_region_points(board, point)
-    perimeter = 4 - len(frontier)
+    frontier = [point]
+    perimeter = 0
     # if region_symbol == "B":
         # print("  Initial perimeter = " + str(perimeter))
 

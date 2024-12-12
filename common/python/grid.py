@@ -84,3 +84,7 @@ def print_points_on_grid(grid: List[List], points: List[GridPoint]):
 
     for line in out_grid:
         print("".join(line))
+
+def print_grid(grid: List[List[str]]):
+    for line in grid:
+        print("".join(line))
