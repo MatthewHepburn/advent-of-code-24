@@ -1,14 +1,8 @@
-import re
 from typing import Optional
 
-from grid import GridVector, GridPoint
+from common import parse_machines, Machine
 from loader import input_as_strings
 
-class Machine:
-    def __init__(self, a_vec: GridVector, b_vec: GridVector, prize: GridPoint):
-        self.a_vec = a_vec
-        self.b_vec = b_vec
-        self.prize = prize
 
 def get_cheapest_win_from_machine(machine: Machine) -> Optional[int]:
     best = None
@@ -26,28 +20,7 @@ def get_cheapest_win_from_machine(machine: Machine) -> Optional[int]:
 if __name__ == "__main__":
     input = [x for x in input_as_strings() if x != ""]
 
-    machines = []
-
-    a_vec = None
-    b_vec = None
-    prize = None
-    for line in input:
-        if "Button" in line:
-            values = [int(x) for x in re.findall('[0-9]+', line)]
-            vec = GridVector(values[0], values[1])
-            if "Button A" in line:
-                a_vec = vec
-            else:
-                b_vec = vec
-        elif "Prize" in line:
-            values = [int(x) for x in re.findall('[0-9]+', line)]
-            prize = GridPoint(values[0], values[1])
-            if a_vec is None or b_vec is None:
-                raise Exception("Parse error! Found Prize without buttons")
-
-            machines.append(Machine(a_vec, b_vec, prize))
-            a_vec = None
-            b_vec = None
+    machines = parse_machines(input)
 
     total = 0
     for machine in machines:
