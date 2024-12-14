@@ -1,5 +1,4 @@
 from enum import Enum
-from nis import match
 from typing import List
 
 class GridVector:
@@ -9,6 +8,12 @@ class GridVector:
     def __init__(self, i, j):
         self.i = i
         self.j = j
+
+    def multiply(self, x: int) -> 'GridVector':
+        return GridVector(self.i * x, self.j * x)
+
+    def __str__(self):
+        return f'[{self.i},{self.j}]'
 
 class GridPoint:
     i: int = 0
