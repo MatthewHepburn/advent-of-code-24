@@ -12,6 +12,9 @@ class GridVector:
     def multiply(self, x: int) -> 'GridVector':
         return GridVector(self.i * x, self.j * x)
 
+    def add(self, x: 'GridVector') -> 'GridVector':
+        return GridVector(self.i + x.i, self.j + x.j)
+
     def __str__(self):
         return f'[{self.i},{self.j}]'
 
@@ -53,6 +56,15 @@ class Direction(Enum):
         if self == Direction.DOWN:
             return Direction.LEFT
         return Direction.UP
+
+    def as_str(self) -> str:
+        if self == Direction.UP:
+            return "^"
+        if self == Direction.RIGHT:
+            return ">"
+        if self == Direction.DOWN:
+            return "v"
+        return "<"
 
 
 def is_in_bounds(grid: List[List], point: GridPoint) -> bool:
