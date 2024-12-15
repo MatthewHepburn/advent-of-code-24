@@ -1,6 +1,7 @@
 from typing import List
 
-from grid import Direction, GridPoint, GridVector, points_in_grid
+from common import direction_from_symbol
+from grid import GridPoint, GridVector, points_in_grid
 from loader import input_as_strings
 from enum import Enum
 
@@ -21,16 +22,6 @@ class MapItem(Enum):
             return MapItem.ROBOT
         raise Exception("Unknown MapItem input: '" + input + "'")
 
-def direction_from_symbol(input: str) -> Direction:
-    if input == ">":
-        return Direction.RIGHT
-    if input == "^":
-        return Direction.UP
-    if input == "<":
-        return Direction.LEFT
-    if input == "v":
-        return Direction.DOWN
-    raise Exception("Unknown Direction input: " + input)
 
 def print_board(board: List[List[MapItem]]):
     for line in board:
