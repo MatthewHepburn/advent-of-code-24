@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from grid import GridPoint, GridVector, points_in_grid, Direction, is_in_bounds
+from grid import GridPoint, Direction, is_in_bounds
 from loader import input_as_chars_trimmed
 
 
