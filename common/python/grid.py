@@ -47,7 +47,7 @@ class Direction(Enum):
     LEFT = GridVector(0, -1)
     RIGHT = GridVector(0, 1)
 
-    def rotate_clockwise(self):
+    def rotate_clockwise(self) -> 'Direction':
         # Could do math here, but don't want
         if self == Direction.UP:
             return Direction.RIGHT
@@ -56,6 +56,15 @@ class Direction(Enum):
         if self == Direction.DOWN:
             return Direction.LEFT
         return Direction.UP
+
+    def rotate_anticlockwise(self) -> 'Direction':
+        if self == Direction.UP:
+            return Direction.LEFT
+        if self == Direction.RIGHT:
+            return Direction.UP
+        if self == Direction.DOWN:
+            return Direction.RIGHT
+        return Direction.DOWN
 
     def as_str(self) -> str:
         if self == Direction.UP:
