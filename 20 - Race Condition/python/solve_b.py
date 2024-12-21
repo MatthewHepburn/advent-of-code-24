@@ -6,9 +6,9 @@ from loader import input_as_chars_trimmed
 
 def get_cheat_points(board: List[List[Union[EmptyPosition, WallPosition]]], point: GridPoint) -> List[GridPoint]:
     points = []
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-2, -1, 0, 1, 2]:
-            if abs(i) + abs(j) != 2:
+    for i in range(-20, 21):
+        for j in range(-20, 21):
+            if abs(i) + abs(j) < 1 or abs(i) + abs(j) > 20:
                 continue
             candidate_point = point.move(GridVector(i, j))
             if not is_in_bounds(board, candidate_point):
@@ -75,26 +75,28 @@ if __name__ == "__main__":
 
         for end_point in get_cheat_points(board, point):
             end_position = board[end_point.i][end_point.j]
-            distance = 2 + start_position.distance_from_start + end_position.distance_from_end
+            cheat_distance = abs(end_point.i - point.i) + abs(end_point.j - point.j)
+            distance = cheat_distance + start_position.distance_from_start + end_position.distance_from_end
             saving = control_distance - distance
-            if saving < 100:
+            if saving < 50:
                 continue
             count = 1 if saving not in cheats_by_savings else cheats_by_savings[saving] + 1
             cheats_by_savings[saving] = count
 
     # Output in example format as test:
-    # possible_savings = list(cheats_by_savings.keys())
-    # possible_savings.sort()
-    # for possible_saving in possible_savings:
-    #     count = cheats_by_savings[possible_saving]
-    #     if count > 1:
-    #         print(f"There are {count} cheats that save {possible_saving} picoseconds")
-    #     else:
-    #         print(f"There is one cheat that saves {possible_saving} picoseconds")
+    possible_savings = list(cheats_by_savings.keys())
+    possible_savings.sort()
+    for possible_saving in possible_savings:
+        count = cheats_by_savings[possible_saving]
+        if count > 1:
+            print(f"There are {count} cheats that save {possible_saving} picoseconds")
+        else:
+            print(f"There is one cheat that saves {possible_saving} picoseconds")
 
     total = 0
-    for _, count in cheats_by_savings.items():
-        total = total + count
+    for saving, count in cheats_by_savings.items():
+        if saving >= 100:
+            total = total + count
 
     print(total)
 
