@@ -1,26 +1,24 @@
-from typing import List, Optional
+from typing import List, Union
 
-from grid import GridPoint, Direction, is_in_bounds, get_directly_adjacent, points_in_grid
+from grid import GridPoint, is_in_bounds, get_directly_adjacent, points_in_grid, GridVector
 from loader import input_as_chars_trimmed
 
-# Cheat states:
-# 0 - not cheated
-# 1 - in first move of cheat
-# 2 - in second move of cheat
-# 3 - cheat ended, cannot cheat again
-
-class RacerPosition:
-    def __init__(self, point: GridPoint, cheat_state: int):
-        self.point = point
-        self.cheat_state = cheat_state
 
 class EmptyPosition:
-    best = None
+    distance_from_start = None
+    distance_from_end = None
     is_wall = False
 
-    def record(self, score: int) -> bool:
-        if self.best is None or score < self.best:
-            self.best = score
+    def record_from_start(self, distance: int) -> bool:
+        if self.distance_from_start is None or distance < self.distance_from_start:
+            self.distance_from_start = distance
+            return True
+
+        return False
+    
+    def record_from_end(self, distance: int) -> bool:
+        if self.distance_from_end is None or distance < self.distance_from_end:
+            self.distance_from_end = distance
             return True
 
         return False
@@ -28,7 +26,11 @@ class EmptyPosition:
 class WallPosition:
     is_wall = True
 
-    def record(self, score: int):
+    def record_from_start(self, distance: int):
+        # Can't go to a wall
+        return False
+
+    def record_from_end(self, distance: int):
         # Can't go to a wall
         return False
 
@@ -48,14 +50,26 @@ def get_end_position(board: List[List[str]]) -> GridPoint:
 
     raise Exception("Could not find start")
 
+def get_cheat_points(board: List[List[Union[EmptyPosition, WallPosition]]], point: GridPoint) -> List[GridPoint]:
+    points = []
+    for i in [-2, -1, 0, 1, 2]:
+        for j in [-2, -1, 0, 1, 2]:
+            if abs(i) + abs(j) != 2:
+                continue
+            candidate_point = point.move(GridVector(i, j))
+            if not is_in_bounds(board, candidate_point):
+                continue
+            if board[candidate_point.i][candidate_point.j].is_wall:
+                continue
+            points.append(candidate_point)
+
+    return points
+
 if __name__ == "__main__":
     input = input_as_chars_trimmed()
 
     start = get_start_position(input)
     end_point = get_end_position(input)
-
-    # TODO - reverse start and end so we have distance to end at every point
-    # We can then assess the saving of every possible cheat by looking at the distance saving
 
     board = []
     for line in input:
@@ -69,7 +83,7 @@ if __name__ == "__main__":
         new_frontier = []
         for point in frontier:
             location = board[point.i][point.j]
-            if not location.record(steps):
+            if not location.record_from_start(steps):
                 # Not an improvement
                 continue
 
@@ -79,9 +93,55 @@ if __name__ == "__main__":
         frontier = new_frontier
 
     # Need to know how long the course takes without cheats to know how much a cheat saves
-    control_time = score = board[end_point.i][end_point.j].best
+    control_distance = board[end_point.i][end_point.j].distance_from_start
+
+    # Work in reverse, record the distance of each point from the end
+    frontier = [end_point]
+    steps = 0
+    while len(frontier) > 0:
+        new_frontier = []
+        for point in frontier:
+            location = board[point.i][point.j]
+            if not location.record_from_end(steps):
+                # Not an improvement
+                continue
+
+            new_frontier = new_frontier + get_directly_adjacent(board, point)
+
+        steps = steps + 1
+        frontier = new_frontier
+
+    # Now, assess all possible cheats
+    cheats_by_savings = dict()
 
     for point in points_in_grid(board):
-        if board[point.i][point.j].is_wall:
+        start_position = board[point.i][point.j]
+        if start_position.is_wall:
             continue
+
+        for end_point in get_cheat_points(board, point):
+            end_position = board[end_point.i][end_point.j]
+            distance = 2 + start_position.distance_from_start + end_position.distance_from_end
+            saving = control_distance - distance
+            if saving < 100:
+                continue
+            count = 1 if saving not in cheats_by_savings else cheats_by_savings[saving] + 1
+            cheats_by_savings[saving] = count
+
+    # Output in example format as test:
+    # possible_savings = list(cheats_by_savings.keys())
+    # possible_savings.sort()
+    # for possible_saving in possible_savings:
+    #     count = cheats_by_savings[possible_saving]
+    #     if count > 1:
+    #         print(f"There are {count} cheats that save {possible_saving} picoseconds")
+    #     else:
+    #         print(f"There is one cheat that saves {possible_saving} picoseconds")
+
+    total = 0
+    for _, count in cheats_by_savings.items():
+        total = total + count
+
+    print(total)
+
 
