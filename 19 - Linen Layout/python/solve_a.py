@@ -10,7 +10,7 @@ def is_possible(towels_by_start: Dict[str, List[str]], target_pattern: str) -> b
         for pattern in frontier:
             if pattern == target_pattern:
                 return True
-            if len(pattern) == len(target_pattern):
+            if len(pattern) >= len(target_pattern):
                 continue
 
             needed_next = target_pattern[len(pattern)]
@@ -23,6 +23,7 @@ def is_possible(towels_by_start: Dict[str, List[str]], target_pattern: str) -> b
 
         frontier = new_frontier
         # print(frontier)
+    return False
 
 if __name__ == "__main__":
     input = input_as_strings()
