@@ -76,6 +76,18 @@ class Direction(Enum):
         return "<"
 
 
+def direction_from_str(string: str) -> Direction:
+    if string == '^':
+        return Direction.UP
+    if string == '>':
+        return Direction.RIGHT
+    if string == '<':
+        return Direction.LEFT
+    if string == 'v':
+        return Direction.DOWN
+
+    raise Exception(f"Got unknown direction: '{string}'")
+
 def is_in_bounds(grid: List[List], point: GridPoint) -> bool:
     if point.i < 0 or point.i >= len(grid):
         return False
