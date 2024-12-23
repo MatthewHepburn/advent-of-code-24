@@ -1,20 +1,13 @@
 import re
 from typing import Dict
 
+from common import Computer
 from loader import input_as_strings
-
-
-class Computer:
-    neighbours: Dict[str, 'Computer'] = dict()
-
-    def __init__(self, name: str):
-        self.name = name
-        self.neighbours = dict()
 
 if __name__ == "__main__":
     input = input_as_strings()
 
-    # First build up a dictionary of computes
+    # First build up a dictionary of computers
     computers: Dict[str, Computer] = dict()
     for line in input:
         if not "-" in line:
