@@ -57,30 +57,43 @@ def step(state: MachineState, program: List[int])-> Optional[int]:
     jumped = False
     output = None
     if instruction == "adv":
-        result = state.reg_a // (2 ** read_combo_operand(state, literal_operand))
+        before = state.reg_a
+        operand = read_combo_operand(state, literal_operand)
+        result = state.reg_a // (2 ** operand)
         state.reg_a = result
+#         print(f"  A = {result} = {before} // 2 ^ {operand}")
     elif instruction == "bxl":
+        before = state.reg_b
         result = xor(state.reg_b, literal_operand)
         state.reg_b = result
+#         print(f"  B = {result} = xor({before}, {literal_operand})")
     elif instruction == "bst":
-        result = read_combo_operand(state, literal_operand) % 8
+        operand = read_combo_operand(state, literal_operand)
+        result = operand % 8
+
         state.reg_b = result
+#         print(f"  B = {result} = {operand} % 8")
     elif instruction == "jnz":
         if state.reg_a != 0:
             state.inst = literal_operand
             jumped = True
     elif instruction == "bxc":
+        before = state.reg_b
         result = xor(state.reg_b, state.reg_c)
         state.reg_b = result
+#         print(f"  B = {result} = xor({before}, {state.reg_c})")
     elif instruction == "out":
         result = read_combo_operand(state, literal_operand) % 8
         output = result
     elif instruction == "bdv":
         result = state.reg_a // (2 ** read_combo_operand(state, literal_operand))
         state.reg_b = result
+#         print(f"  B = {result}")
     elif instruction == "cdv":
-        result = state.reg_a // (2 ** read_combo_operand(state, literal_operand))
+        operand = read_combo_operand(state, literal_operand)
+        result = state.reg_a // (2 ** operand)
         state.reg_c = result
+#         print(f"  C = {result} = {state.reg_a} // (2 ^ {operand})")
     else:
         raise Exception("Unknown instruction: " + instruction)
 
