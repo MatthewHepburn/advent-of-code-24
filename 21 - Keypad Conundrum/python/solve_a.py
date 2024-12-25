@@ -1,9 +1,7 @@
-from copy import copy
-from typing import List, Union, Optional
+from typing import List, Optional
 
-from common import EmptyPosition, WallPosition, get_start_position, get_end_position
-from grid import GridPoint, direction_from_str, points_in_grid, GridVector, Direction
-from loader import input_as_chars_trimmed, input_as_strings
+from grid import GridPoint, direction_from_str, points_in_grid, Direction
+from loader import input_as_strings
 
 
 class Keypad:
@@ -40,12 +38,6 @@ class Keypad:
             output.append('<')
         elif j_diff > 0 and self.is_safe(position.move(Direction.RIGHT.value)):
             output.append('>')
-
-
-
-        # if output and len(self.keys) == 2:
-        #     return output
-
 
         if not output:
             # No change in position needed, so push required
@@ -128,47 +120,46 @@ if __name__ == "__main__":
     ]
 
     # Work out the shortest way to enter each sequence on the first dpad up the stack
-
-    # TODO - need to account for possible states in the top dpad - others in stack will always start/end on A, but that may not
-    seq_lens = dict()
+    # We need to account for possible states in the top dpad - others in stack will always start/end on A, but that may not
     seqs = dict()
-    for target in ["<", ">", "^", "v", "A", "<A^A>^^AvvvA"]:
-        numpad1 = Keypad(dpad_keys)
-        numpad2 = Keypad(dpad_keys)
-        numpad3 = Keypad(dpad_keys)
+    numpad1 = Keypad(dpad_keys)
+    numpad2 = Keypad(dpad_keys)
+    for start_point in points_in_grid(dpad_keys):
+        if dpad_keys[start_point.i][start_point.j] == '':
+            continue
 
-        numpad1_sequences = numpad1.get_best_sequences(target)
-        nice = ["".join(s) for s in numpad1_sequences]
-        print(f'Best numpad_1 seqs for {target} = ', nice)
+        for target in ["<", ">", "^", "v", "A"]:
+            numpad1.start_position = start_point
+            numpad1_sequences = numpad1.get_best_sequences(target)
+            nice = ["".join(s) for s in numpad1_sequences]
+            print(f'Best numpad_1 seqs for {target} = ', nice)
 
-        numpad2_sequences = []
-        for numpad1_sequence in numpad1_sequences:
-            sequences = numpad2.get_best_sequences("".join(numpad1_sequence))
-            numpad2_sequences = numpad2_sequences + sequences
+            numpad2_sequences = []
+            for numpad1_sequence in numpad1_sequences:
+                sequences = numpad2.get_best_sequences("".join(numpad1_sequence))
+                numpad2_sequences = numpad2_sequences + sequences
 
-        nice = ["".join(s) for s in numpad2_sequences]
-        # print(f'Best numpad 2 seqs for {target} = ', nice)
+            nice = ["".join(s) for s in numpad2_sequences]
+            # print(f'Best numpad 2 seqs for {target} = ', nice)
 
-        shortest_len = min([len(s) for s in numpad2_sequences])
-        seq_lens[target] = shortest_len
-        seqs[target] = ["".join(s) for s in numpad2_sequences if len(s) == shortest_len][0]
+            end_pos = None
+            for point in points_in_grid(dpad_keys):
+                if dpad_keys[point.i][point.j] == target[-1]:
+                    end_pos = point
+                    break
 
-        # numpad3_sequences = []
-        # for numpad2_sequence in numpad2_sequences:
-        #     sequences = numpad3.get_best_sequences("".join(numpad2_sequence))
-        #     numpad3_sequences = numpad3_sequences + sequences
-        #
-        # nice = ["".join(s) for s in numpad3_sequences]
-        # print(f'Best numpad 3 seqs for {target} = ', nice)
+            assert end_pos is not None
 
-        # shortest_len = min([len(s) for s in numpad3_sequences])
-        # seq_lens[target] = shortest_len
+            key = start_point.as_str() + " -> " + target
 
-    print(seq_lens)
+            shortest_len = min([len(s) for s in numpad2_sequences])
+            shortest_seq = ["".join(s) for s in numpad2_sequences if len(s) == shortest_len][0]
+            seqs[key] = (shortest_seq, end_pos)
 
+    print(seqs)
 
     total = 0
-    for code in input[:1]:
+    for code in input:
         keypad = Keypad(numpad_keys)
         numpad1 = Keypad(dpad_keys)
         numpad2 = Keypad(dpad_keys)
@@ -181,11 +172,14 @@ if __name__ == "__main__":
         best = None
         best_seq = None
         for seq in keypad_sequences:
-            seq_len = 0
             input_seq = ''
+            dpad_pos = GridPoint(0,2)
             for char in seq:
-                seq_len = seq_len + seq_lens[char]
-                input_seq = input_seq + seqs[char]
+                key = dpad_pos.as_str() + " -> " + char
+                this_seq, dpad_pos = seqs[key]
+                input_seq = input_seq + this_seq
+
+            seq_len = len(input_seq)
             best = seq_len if best is None or seq_len < best else best
             if best == seq_len:
                 best_seq = input_seq
